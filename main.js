@@ -1,25 +1,45 @@
-function setup()
-{
-    canvas = createCanvas(640,480);
-    canvas.position(110,250);
+noseX = 0;
+noseY = 0;
+
+function preload() {
+   clown_nose = loadImage('https://i.postimg.cc/3x3QzSGq/m.png') ;
+
+}
+
+function setup(){
+    canvas = createCanvas(300,300);
+    canvas.center();
     video = createCapture(VIDEO);
+    video.size(300,300);
     video.hide();
-    tint_color = "";
-}
 
-function draw()
-{
-    image(video,0,0,640,480);
-    tint(tint_color);
+    poseNet = ml5.poseNet(video, modelLoaded)
+    poseNet.on('pose',gotPoses);
 
 }
 
-function take_snapshot()
-{
-    save('saif.png');
+function modelLoaded() {
+    console.log('poseNet Is Initialized');
+
 }
 
-function filter_tint()
-{
-    tint_color = document.getElementById("color_name").value;
+function gotPoses(results) {
+    if(results.length > 0)
+    {
+          console.log(results);
+          noseX = results[0].pose.nose.x-40;
+          noseY = results[0].pose.nose.y;
+          console.log("nose x =" + noseX);
+          console.log("nose y =" + noseY);
+    }
+}
+
+function draw() {
+    image(video,0,0,300,300);
+    image(clown_nose,noseX,noseY,80,35);
+    
+}
+
+function take_snapshot(){
+    save('myFilterImage.png');
 }
